@@ -2,15 +2,26 @@ import Safe from 'ui/components/feedback/Safe/Safe'
 import PageTitle from 'ui/components/data-display/PageTitle/PageTitle';
 import UserInformation from 'ui/components/data-display/UserInformation/UserInformation'
 import TextFieldMask from 'ui/components/inputs/TextFieldMask/TextFieldMask';
-import { Button, Typography, Container } from "@material-ui/core";
+import { Button, Typography, Container, CircularProgress } from "@material-ui/core";
 import {FormElementsContainer, ProfissionaisPaper, ProfissionaisContainer} from "@styles/pages/index.style";
-import useIndex from "../data/hooks/pages/useIndex.page";
+import useIndex from "data/hooks/pages/useIndex.page";
 
 
 export default function Home() {
 
-  const { cep, setCep }= useIndex();
+  const {
+    cep,
+    setCep,
+    cepValido,
+    buscarProfissionais,
+    erro,
+    diaristas,
+    buscaFeita,
+    carregando,
+    diaristasRestantes
+  } = useIndex();
 
+  // @ts-ignore
   return (
       <div>
         <Safe/>
@@ -21,56 +32,52 @@ export default function Home() {
         <Container>
           <FormElementsContainer>
             <TextFieldMask
-              mask={'99.999-999'}
-              label={'Digite seu CEP'}
+              mask={"99.999-999"}
+              label={"Digite seu CEP"}
               fullWidth
-              variant={'outlined'}
+              variant={"outlined"}
               value={cep}
               onChange={(event) => setCep(event.target.value)}
             />
-            <Typography color={'error'}>Cep Inválido</Typography>
-            <Button variant={'contained'}  sx={{width: '220px'}}>Buscar</Button>
+            {cep}
+            {erro && <Typography color={'error'}>{erro}</Typography>}
+            <Button
+              variant={'contained'}
+              sx={{width: '220px'}}
+              disabled={!cepValido || carregando}
+              onClick={() => buscarProfissionais(cep)}
+            >
+              {carregando ? <CircularProgress size={20}/> : 'Buscar'}
+            </Button>
           </FormElementsContainer>
-          <ProfissionaisPaper>
-            <ProfissionaisContainer>
-              <UserInformation
-                name={'Fábio'}
-                picture={'https://github.com/filipedeschamps.png'}
-                rating={4}
-                description={'Sorocaba'}
-              />
-              <UserInformation
-                name={'Fábio'}
-                picture={'https://github.com/filipedeschamps.png'}
-                rating={4}
-                description={'Sorocaba'}
-              />
-              <UserInformation
-                name={'Fábio'}
-                picture={'https://github.com/filipedeschamps.png'}
-                rating={4}
-                description={'Sorocaba'}
-              />
-              <UserInformation
-                name={'Fábio'}
-                picture={'https://github.com/filipedeschamps.png'}
-                rating={4}
-                description={'Sorocaba'}
-              />
-              <UserInformation
-                name={'Fábio'}
-                picture={'https://github.com/filipedeschamps.png'}
-                rating={4}
-                description={'Sorocaba'}
-              />
-              <UserInformation
-                name={'Fábio'}
-                picture={'https://github.com/filipedeschamps.png'}
-                rating={4}
-                description={'Sorocaba'}
-              />
-            </ProfissionaisContainer>
-          </ProfissionaisPaper>
+          {buscaFeita && ( diaristas.length > 0 ?
+            <ProfissionaisPaper>
+              <ProfissionaisContainer>
+                {diaristas.map((item, index) => {
+                  return <UserInformation
+                    key={index}
+                    name={item.nome_completo}
+                    picture={item.foto_usuario}
+                    rating={item.reputacao}
+                    description={item.cidade}
+                  />
+                })}
+              </ProfissionaisContainer>
+
+              <Container sx={{textAlign: 'center'}}>
+                {diaristasRestantes > 0 && (
+                  <Typography>
+                    ... e mais {diaristasRestantes} {diaristasRestantes > 1 ? 'profissionais atendem' : 'profissional atende'} ao seu endereço.
+                  </Typography>
+                )}
+                <Button variant={'contained'} sx={{mt: 5}}>Contratar um profissional.</Button>
+              </Container>
+
+            </ProfissionaisPaper>
+              : (
+                <Typography align={'center'} color={'textPrimary'}>Ainda não temos nenhuma diarista disponivel em sua região.</Typography>
+              )
+          )}
         </Container>
 
       </div>

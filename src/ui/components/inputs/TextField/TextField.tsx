@@ -1,4 +1,4 @@
 import React from 'react';
-import * as S from './TextField.style';
+import {TextFieldStyled} from './TextField.style';
 
-export default S.TextFieldStyled;
+export default TextFieldStyled;

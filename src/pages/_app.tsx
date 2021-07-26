@@ -3,8 +3,8 @@ import {ThemeProvider} from "@material-ui/core";
 import theme from 'ui/themes/theme';
 import Head from 'next/head'
 import Header from 'ui/components/surfaces/Header/Header'
-import Footer from "../ui/components/surfaces/Footer/Footer";
-import {AppContainer} from "@styles/pages/_app.style";
+import Footer from "ui/components/surfaces/Footer/Footer";
+import { AppContainer } from "ui/styles/pages/app.style";
 
 function MyApp({ Component, pageProps }) {
   return (
